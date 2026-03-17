@@ -423,8 +423,8 @@
       background: rgba(15,14,13,0.85);
       display: flex; align-items: center; justify-content: center;
       z-index: 100;
-      backdrop-filter: blur(4px);
     }
+    .config-overlay[style*="display: none"] { display: none !important; }
 
     .config-box {
       background: var(--paper);
@@ -699,14 +699,19 @@ This is the most likely concern a hiring manager will have, and it should be add
 // ── START APP ──
 function startApp() {
   const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key || !key.startsWith('sk-ant-')) {
-    alert('Please enter a valid Anthropic API key (starts with sk-ant-)');
+  if (!key) {
+    alert('Please paste your Anthropic API key.');
     return;
   }
   apiKey = key;
   company = document.getElementById('companySelect').value;
 
-  document.getElementById('configOverlay').style.display = 'none';
+  const overlay = document.getElementById('configOverlay');
+  overlay.style.display = 'none';
+  overlay.style.visibility = 'hidden';
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+
   document.getElementById('sendBtn').disabled = false;
 
   if (company && companyModules[company]) {
