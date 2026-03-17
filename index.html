@@ -139,7 +139,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:'DM S
 <script>
 var apiKey = '';
 var company = '';
-var history = [];
+var chatHistory = [];
 var welcomed = false;
 
 var companies = {
@@ -228,7 +228,7 @@ async function sendMessage() {
   document.getElementById('sendBtn').disabled = true;
 
   addMsg('user', text);
-  history.push({role: 'user', content: text});
+  chatHistory.push({role: 'user', content: text});
   var typingEl = addMsg('assistant', 'TYPING');
 
   try {
@@ -244,7 +244,7 @@ async function sendMessage() {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
         system: buildSystem(),
-        messages: history
+        messages: chatHistory
       })
     });
 
@@ -254,7 +254,7 @@ async function sendMessage() {
     if (data.content && data.content[0] && data.content[0].text) {
       var reply = data.content[0].text;
       bbl.innerHTML = fmt(reply);
-      history.push({role: 'assistant', content: reply});
+      chatHistory.push({role: 'assistant', content: reply});
     } else if (data.error) {
       bbl.innerHTML = '<p>Error: ' + data.error.message + '</p>';
     } else {
