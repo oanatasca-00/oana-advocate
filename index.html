@@ -141,6 +141,34 @@ var apiKey = '';
 var company = '';
 var chatHistory = [];
 var welcomed = false;
+var sessionId = 'session_' + Date.now();
+
+var SUPABASE_URL = 'https://dnrmskfvkcttqundfhfu.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRucm1za2Z2a2N0dHF1bmRmaGZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NzA3NTUsImV4cCI6MjA4OTM0Njc1NX0.OlqpDf78e-vMS_qte9OgioQ9V-GNF2Y2rx4cDwEUXW4';
+
+async function logConversation(userMsg, aiReply) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/conversations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        session_id: sessionId,
+        company: company || 'general',
+        user_message: userMsg,
+        ai_reply: aiReply
+      })
+    });
+  } catch(e) {}
+}
+
+function getUrlCompany() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('company') || '';
+}
 
 var companies = {
   datadog: {
@@ -382,6 +410,7 @@ async function sendMessage() {
       var reply = data.content[0].text;
       bbl.innerHTML = fmt(reply);
       chatHistory.push({role: 'assistant', content: reply});
+      logConversation(text, reply);
     } else if (data.error) {
       bbl.innerHTML = '<p>Error: ' + data.error.message + '</p>';
     } else {
@@ -415,6 +444,13 @@ document.getElementById('startBtn').addEventListener('click', function() {
   }
 
   showWelcome();
+});
+
+window.addEventListener('load', function() {
+  var urlCo = getUrlCompany();
+  if (urlCo && companies[urlCo]) {
+    document.getElementById('coSelect').value = urlCo;
+  }
 });
 
 document.getElementById('userInput').addEventListener('input', function() {
