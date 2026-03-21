@@ -58,39 +58,24 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:'DM S
 #sendBtn:hover{background:var(--gold)}
 #sendBtn:disabled{background:var(--border);cursor:not-allowed}
 .hint{font-size:11px;color:var(--muted);text-align:center;margin-top:8px}
-.overlay{position:fixed;inset:0;background:rgba(15,14,13,.88);display:flex;align-items:center;justify-content:center;z-index:999}
-.overlay.hidden{display:none}
-.config{background:var(--paper);border-radius:6px;padding:44px;max-width:480px;width:92%;box-shadow:0 24px 48px rgba(0,0,0,.35)}
-.config h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:6px}
-.config p{font-size:12.5px;color:var(--muted);margin-bottom:24px;line-height:1.6}
-.config label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.config input,.config select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--ink);margin-bottom:18px;outline:none}
-.config input:focus,.config select:focus{border-color:var(--gold)}
-.start-btn{width:100%;padding:13px;background:var(--ink);color:var(--paper);border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13.5px;cursor:pointer;letter-spacing:.04em;transition:background .15s}
-.start-btn:hover{background:var(--gold);color:var(--ink)}
-.config-note{font-size:11px;color:var(--muted);text-align:center;margin-top:14px}
+.co-selector-bar{padding:10px 36px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--paper)}
+.co-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.co-selector-bar select{padding:6px 12px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;cursor:pointer}
+.co-selector-bar select:focus{border-color:var(--gold)}
 @media(max-width:700px){.app{grid-template-columns:1fr}.sidebar{display:none}.msgs{padding:20px}.chat-hdr{padding:18px 20px}.inp-area{padding:12px 20px 20px}}
 </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay">
-  <div class="config">
-    <h2>Welcome</h2>
-    <p>Enter your Anthropic API key to power this AI advocate. It stays in your browser only and is never stored.</p>
-    <label>Anthropic API Key</label>
-    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off"/>
-    <label>Target Company (optional)</label>
-    <select id="coSelect">
-      <option value="">— Select a company —</option>
-      <option value="keyence">KEYENCE</option>
-      <option value="datadog">Datadog</option>
-      <option value="hubspot">HubSpot</option>
-      <option value="salesforce">Salesforce</option>
-    </select>
-    <button class="start-btn" id="startBtn">Begin Conversation →</button>
-    <p class="config-note">Your API key is used only for this session and is never saved.</p>
-  </div>
+<div class="co-selector-bar" id="coSelectorBar">
+  <span class="co-label">Select company:</span>
+  <select id="coSelect" onchange="onCompanyChange()">
+    <option value="">— General —</option>
+    <option value="keyence">KEYENCE</option>
+    <option value="datadog">Datadog</option>
+    <option value="hubspot">HubSpot</option>
+    <option value="salesforce">Salesforce</option>
+  </select>
 </div>
 
 <div class="app">
@@ -138,7 +123,6 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:'DM S
 </div>
 
 <script>
-var apiKey = '';
 var company = '';
 var chatHistory = [];
 var welcomed = false;
@@ -427,14 +411,9 @@ async function sendMessage() {
   var typingEl = addMsg('assistant', 'TYPING');
 
   try {
-    var response = await fetch('https://api.anthropic.com/v1/messages', {
+    var response = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
@@ -465,32 +444,31 @@ async function sendMessage() {
   document.getElementById('msgs').scrollTop = document.getElementById('msgs').scrollHeight;
 }
 
-document.getElementById('startBtn').addEventListener('click', function() {
-  var key = document.getElementById('apiKey').value.trim();
-  if (!key) {
-    alert('Please enter your Anthropic API key.');
-    return;
-  }
-  apiKey = key;
+function onCompanyChange() {
   company = document.getElementById('coSelect').value;
-
-  document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('sendBtn').disabled = false;
-
+  var badge = document.getElementById('coBadge');
   if (company && companies[company]) {
-    var badge = document.getElementById('coBadge');
     badge.textContent = companies[company].name;
     badge.classList.add('on');
+  } else {
+    badge.classList.remove('on');
   }
-
+  chatHistory = [];
+  welcomed = false;
   showWelcome();
-});
+}
 
 window.addEventListener('load', function() {
   var urlCo = getUrlCompany();
   if (urlCo && companies[urlCo]) {
+    company = urlCo;
     document.getElementById('coSelect').value = urlCo;
+    var badge = document.getElementById('coBadge');
+    badge.textContent = companies[urlCo].name;
+    badge.classList.add('on');
   }
+  document.getElementById('sendBtn').disabled = false;
+  showWelcome();
 });
 
 document.getElementById('userInput').addEventListener('input', function() {
