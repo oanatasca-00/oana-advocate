@@ -83,6 +83,7 @@ html,body{height:100%;background:var(--paper);color:var(--ink);font-family:'DM S
     <label>Target Company (optional)</label>
     <select id="coSelect">
       <option value="">— Select a company —</option>
+      <option value="keyence">KEYENCE</option>
       <option value="datadog">Datadog</option>
       <option value="hubspot">HubSpot</option>
       <option value="salesforce">Salesforce</option>
@@ -171,6 +172,45 @@ function getUrlCompany() {
 }
 
 var companies = {
+  keyence: {
+    name: 'KEYENCE',
+    ctx: `ROLE CONTEXT: Oana is applying for the Business Development Graduate role at KEYENCE Dublin. This is a direct sales role covering a defined territory, 3 days field-based visiting client sites to demonstrate and sell products, 2 days office-based prospecting and nurturing relationships. The role starts with a 4-8 week intensive training programme and leads to full territory ownership.
+
+WHAT KEYENCE DOES (plain English analogy): Imagine a factory making cars, food, or medicines. At every step of that process, someone needs to check that parts are the right size, that barcodes scan correctly, that nothing dangerous gets through. KEYENCE makes the sensors, cameras, measurement tools and laser markers that do all of that — automatically, at high speed, with extraordinary precision. They are the eyes and brain of a modern factory. Founded in Japan in 1974, they now serve 350,000 clients across 110 countries, turn over $7 billion globally, operate at a 51.9% operating profit margin, and have been named one of Forbes' Top 100 Most Innovative Companies for 8 consecutive years. 70% of their new products are a world first or industry first. The industrial automation market they operate in is projected to grow from $311 billion in 2025 to $485 billion by 2030 — this is an industry accelerating, not slowing down.
+
+WHY KEYENCE — THREE REASONS:
+
+1. THE CULTURE — AND WHY IT FITS WHO I AM:
+KEYENCE's culture is built around five principles: Key Sense (teamwork and shared decision-making), Think Logically, Improvement Consciousness, Open-Minded, and Objective Consciousness. What strikes me most is the belief that "what was said" matters more than "who said it." As a new hire, your ideas carry the same weight as anyone else's — if the thinking is sound, it gets heard.
+
+This resonates deeply with me. At Better Days in Greece, I inherited an engagement problem nobody had solved. I didn't wait for permission — I scrapped the existing approach, listened to the students, and rebuilt from scratch. The result was the highest attendance rate in the centre's history. That's exactly the kind of improvement consciousness and open-minded thinking KEYENCE talks about.
+
+Their commitment to continuous learning also matches how I operate. At KEYENCE, they say one year of growth equals three years at most companies. That is precisely the environment I am looking for at the start of my career.
+
+2. THE AUTONOMY AND RESPONSIBILITY — THE BEST WAY TO LEARN:
+KEYENCE hands you a territory after just a few months. You become the CEO of that territory — responsible for new business development, consultative customer visits, market analysis, and sales strategy. You own the results.
+
+I thrive in environments where I am trusted with real responsibility early. At Harbour House, I was handed a team of 8 and full accountability for the commercial performance of the restaurant while studying full-time. I drove a 33% year-on-year revenue increase — not because someone told me exactly what to do, but because I was given ownership and I ran with it.
+
+That combination of structured training followed by genuine autonomy is, in my view, the fastest way to grow. You learn by doing, by failing, by adjusting — not by watching from the sidelines.
+
+3. THE GROWTH OPPORTUNITY — A CLEAR PATH, NOT A VAGUE PROMISE:
+KEYENCE has a 100% promote-from-within policy. Every manager started where I would start. The path is real, the timeline is clear, and the people coaching you have done your exact job.
+
+What also excites me is the scale of the opportunity. KEYENCE serves 90% of all manufacturing sub-industries. In Ireland, that means pharmaceutical giants, tech manufacturers, food producers — some of the most important companies in the country. The territory I would own is not a small patch. It is a meaningful piece of a $7 billion global business that has grown over 10% annually for 25 consecutive years.
+
+I want to build a career, not just fill a role. KEYENCE offers both the structure to develop fast and the scale to grow into something significant.
+
+PRODUCT ANALOGY FOR KEYENCE:
+Think of a factory like a giant, complex kitchen making thousands of meals a second. KEYENCE makes the tools that check every single ingredient is the right size, every label is correct, every machine is running safely — all automatically, in real time, without slowing the kitchen down. Without those tools, factories would either slow everything down with manual checks, or ship defective products. KEYENCE eliminates that problem with sensors, cameras, and measurement systems that are faster and more precise than any human inspector could be.
+
+KEYENCE CULTURE VALUES ALIGNMENT:
+- Key Sense (collective decision-making) → mirrors how I ran the Better Days programme: listened first, then co-created solutions with the students
+- Open-Minded (ideas valued regardless of seniority) → mirrors my coaching certification work: I was paired with Rolls Royce managers and coached as an equal
+- Improvement Consciousness → mirrors how I approach every role: track metrics, find what is not working, fix it, repeat
+- Think Logically → mirrors my Economics background and my data-driven approach to sales targets and metrics
+- Objective Consciousness → mirrors my 30-day plan: always ask why, always know what success looks like before starting`
+  },
   datadog: {
     name: 'Datadog',
     ctx: 'Oana is targeting Datadog because she is genuinely excited about observability as a category. She understands Datadog gives engineering teams real-time visibility across their entire stack. Her cross-functional experience at Kepak across 6 teams mirrors exactly the multi-stakeholder navigation an SDR needs with technical buyers. Her research acumen from the Laidlaw programme means she gets up to speed on any prospect stack quickly.'
@@ -331,7 +371,7 @@ function showWelcome() {
     '<p>I know everything about Oana\'s background and why she would be a great SDR' + coName + '. Start with a prompt below or type your own.</p>' +
     '<div class="starters">' +
     '<button class="s-btn" onclick="useStarter(this)">Why should I hire Oana?</button>' +
-    '<button class="s-btn" onclick="useStarter(this)">What would Oana do in her first 30 days in a new role?</button>' +
+    '<button class="s-btn" onclick="useStarter(this)">' + (company === 'keyence' ? 'Why KEYENCE?' : 'What would Oana do in her first 30 days?') + '</button>' +
     '<button class="s-btn" onclick="useStarter(this)">What is Oana\'s philosophy around failure and rejection?</button>' +
     '</div></div>';
 }
